@@ -1,0 +1,86 @@
+>>>> Podsumowanie procesu tworzenia obiektów. Dotyczy przykladow InicjalizacjiwKonstruktorze i InicjalizacjiZmiennychStatycznych:
+Rozwazmy to na przykladzie klasy Dog:
+1.  Gdy pierwszy raz tworzony jest obiekt Dog albo gdy pierwszy raz nastêpuje siegniecie do metody lub zmiennej statycznej zamieszcoznej w tej klasie, 
+to interpreter Javy musi zlokalizowac Dog.class przez przeszukiwanie sciezki klas
+2. Oi wczytaniu klasy (stworzenie obiektu typu Class) przeprowadzane s¹ wszystkei inicjalizacje statyczne. A wiec inicjalizacja statyczna wystepuje tylko raz,
+gdy pierwszy raz ladowany jest obiekt klasy Class
+3. Kiedy tworzymy obiekt przez "new Dog()", proces konstrukcji obiektu Dog przysepuje do alokacji odpowiedniej ilosci pamieci dla obiektu na stercie.
+4. Przydzielony obszar jest wymazywany z automatycznym ustawieniem wsyzstkich typow podstawowych obiektu Dog na ich wartosci domyslne
+5. Nastepuje inicjalizacjia wszystkich pol okrelsona jawnie w miejscu ich definicji
+6. Wykonywane sa ciala kosntruktorów. 
+
+
+>> JAWNAINICJALIZACJASTATYCZNA
+
+Java pozwala na zebranie inicjalizacji statycznych wewnatrz specjalnej klauzuli konstrukcyjnej static (blok statyczny)
+umieszczonej w klasie. Wyglada to jak metoda, ale posiada tylko slowo kluczowe static, po ktorym wystêpuje cia³o metody.
+Tak samo jak inne inicjalizacje statyczne, kod ten wywo³ywany jest tylko raz - kiedy tworzymy obiekt danej klasy lub kiedy
+po raz pierwszy siêgamy do jednej z jej sk³adowych statycznych (nawet w przypadku kiedy nigdy nei stworzymy obiektu tej 
+klasy). Wiêcej w przyk³adzie.
+
+>> INICJALIZACJA EGZEMPLARZA
+
+Wyglada dokladnie tak, jak klauzula inicjalizacji statycznej poza brakujacym slowiem static. Zapis taki jest koneiczny, by zapewniæ inicjalizacjê 
+anonimowych klas wewnêtrznych (o tym pozniej). Daje rownie¿ gwarancje, ze pewnie operacje zrealizowane zostan¹ niezaleznie od wywolania ktoregokolwiek
+z jawnych instruktorów. Blok inicjializacji egzemplarza wykonywany jest kazdorazowo jeszcze przed dwolonym z konstruktorów. Czyli tak samo, jak inicjializacja
+obiektów itp - wywolywana jeszcze przed konstruktorem. Do teog nie pisalem przykladu, ale wyglada to tak:
+
+
+>>INICJALIZACJA TABLLIC
+Tablice to jakby sekwencja, obiektów lub zmiennych typu podsatwoego - wszystkich tego samego typu. Kompilator nie pozwala okreœliæ, jak duza ma byc tablica.
+Tak wiêc jak utworzymy int[] a; to utworzylismy tylko referencje do tablicy - dla niej samej nie zostala jeszcze zalokowana zadna pamiêæ. ¯eby obszar pamieci
+dla tej tablicy przydzielic, trzeba ja zinicjalizowaæ. Inicjalizacja tablci moze wystapic gdziekolwiek, nawet w miejscu deklaracji tablicy ( int[]a = {1,2,4] ).
+Przydzia³em pamiêci w tym wypadku zajmuje sie kompilator.
+Czasami, kiedy nei wiemy na starcie definicji jak irozmiar bedzie miala tablica, mozemy ja utworzyc za pomoca slowa new: (int[] a; a = new int[x]). Np: i tutaj za x podac
+dlugosc.
+
+Tworz¹c tablice typu innego niz typ podstaowwy, tworzymy tablice referencji (np tablcia obiektow, albo typu opakowujacego Integer, ktory jest klasa a nie type mpdosatwowym).
+
+>> ArrayOfPrimitives
+Jako ze tablica bez inicjalizacji jest jakby referencja, to jak np przypiszemy jedna tablice do drugiej (np a1 = a2), to obie tablcie wskazuja na te sama referencje. Oznacza to, ze jak
+zmodyfikujemy a2, to rowniez a1 zostanie zmodyfikowana.
+Widac w przykladzie, ze tablica a1 jest inicjalizowana w miejscu deklaracji, natomiast a2 nie. Wartosc dla a2 przypisana jest pozniej i jest to w tym przykladzie referencja do innej 
+tablicy. a2 i a2 odnosz¹ siê wiec do tej samej tablicy. Zmiany wiêc tablicy a2 widoczne s¹ zap osrednictwem referencji a1. Tak samo na odwrót.
+
+
+>> ArrayClassObj
+Tworz¹c tablice typu innego niz typ podstaowwy, tworzymy tablice referencji (np tablcia obiektow, albo typu opakowujacego Integer, ktory jest klasa a nie type mpdosatwowym).
+Tutaj w przykladzie nawet po wywolaniu new, w celu utworzenia tablicy: Integer[] a = new Integer[x];, otrzymujemy jedynie tablice referencji i sama inicjalizcja nie jest kompletna,
+dopoki referenjce same nie zostana zainicjalizownwe przez stworzenie nowych obiektów Integer, czyli zapelnienia tej tablicy elementamy typu Integer.
+Jezeli zapomnimy o utworzeniu obiektu, to proba odwolania sie do takiej pustej referencji zakonczy sie zgloszeniem wyjatku w trakcie wykonywania programu. W podstawowych typach w takim
+wypadku wstawiane sa domyslne wartosci dane dla naego typu (np. dla int 0, dla bool falsey itp tid)
+
+Jak w przykladzie pokazane, mamy dwa sposoby tworzenia tablic (przez a2 = new Integer[x] i wypelnianie albo a2 = {new Integer(1), new Integer(2), 3,};. 
+Pierwszy sposob jest ograniczony, gdyz moze ozstac uzyty tylko w miejscu definicji tablicy. Postac ruga mozna stosowac wszedzie, nawet w obrebie wywolywania metody (jako parametr cala ta
+sekwencja) np:
+
+	mug.fill(new String[]{"faf", "afasf", "fafsfa"})' itp itd.
+
+Tablica wystepujaca w roli argumentu tej metody tworzona jest w miejscu wywolania metody
+
+
+>> Zmienne listy argumentow
+Poniewaz wysztkie klasy sa wywiedzione ze wspolnej klasy bazowej Object (bedzie o tym pozniej) to mozna stworzyc metode, ktora pobiera tablice obiektow i wywolac ja np tak jak pokazano 
+w przykladzie (1). Jednak wraz z JavaSe5 zmienna liste argumentow mozna definiowac za posrednitwem wielokropka, jak w przykladzie (2) w metodzie printArray();
+
+Jak widac w przykladzie do metody przekazywana jest tablica obiektow Object, ktora zdefiniowana zostala jak juz wczensiej wspomnialem ze jest taka mozliwosc - wewnatrz wywolania metody. 
+
+Dzieki zmiennym listom argumentow nie trzeba jawnie korzystac ze skladni inicjalizacji tablicowej - to kompilator samodzielnie zmontuje odpwoiednia tablice. Przekazywanie wciaz odbywa sie 
+wlasnie w tablicy, dlatego w metodzie printArray() mozna skorzystac z foreacha. Mamy jednak tutaj do czynienia nie tylko z automatyczna konwersja listy elementów na postac tablicy. Na samym
+koncu przykladu rzutujemy tablice obiektow Integer (utworzonej za pomoca pakowania) na tablice obiektów Object (zeby pozbyc sie ostrzezenia ze storny kompilatora) i przekazujemy ja do metody. 
+Wszystko dziala. Oznacza to, ze kompilator rozpoznaje tablcie i nie podejmuje konwersji. Tak wiec jak mamy zestaw wartosci to mozemyu je przekazac jako liste, a jezeli dysponujemy jzu gotowa
+tablica, to mozemy przekazac nawet te tablice.
+
+Mozna rowniez skonstruowac pusta tablice. Z przykladu wynika tez, ze zmienne listy argumentow mozna stosowac z typami innymi niz Object. 
+
+Co wazne, przy montowaniu tablicy dla mziennej listy argumentow z typami podsatowymi nie odbywa sie pakowanie elementow tej tablicy - do metody przekazywana jest wtedy tablica wartosci 
+podstawowych. 
+
+Zmienne listy arugmentow dzialania tez z mechanizmem automatyczne pakowania w obiekty. W pojedynczje liscie arugmetnow mozna mieszac typy, a mechanizm pakowania dokona wybiorczo promocji typow,
+np int na Integer. 
+
+>>ZmienneListyArgumentowPrzeciazanie
+
+Zmienne listy argumetnow komplikuja jednak proces przeciazania. Jak w przykladzie (1) pokazane, w kazdym przypadku kompilator uzywa mechanizmu pakowania zeby dopasowac wywolanie metody przeciazonej,
+wybierajac wersje ktora pasuje najlepiej. Ale przy wywolaniu f() bez arugmentow - kompilator nie bedize wiedzial, o ktore wywolanie chodzi. Problem ten mozna jednak probowac rozwiazac 
+uzupelniajac liste argumentow jednej z metod argumentem wymaganym, ktory moglby roznicowac przeciazone wersje metody. (przuklad 2) 

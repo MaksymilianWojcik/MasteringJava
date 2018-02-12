@@ -1,0 +1,53 @@
+Ogolnie:
+
+	W javie powtórne uzycie kodu jest mo¿liwe dziêki tworzeniu nowych klas, ale zamiast tworzyæ je od podstaw wykorzystuje siê te ju¿ istniej¹ce (które
+np. zbudowa³ ktoœ inny). Polega to wszystko na korzystaniu z istniej¹cych klas, ale bez modyfikacji ich kodu. 
+	Istniej¹ 2 sposoby na osi¹gniêcie tego: tworzenie nowych obiektów klas ju¿ istniej¹cych jako sk³adowe innych klas. Czyli standardowe
+tworzenie obiektu jakiejœ klasy z funkcjami. Takie coœ nazywa siê kompozycj¹, bo nowa klasa skomponowana jest z obiektów ju¿ istniej¹cych klas. My tylko
+wykorzystujemy ponownie funkcje kodu, a nie jego postaæ.
+	Drugie rozwi¹zanie polega na stworzeniu nowej klasy jako typu klasy istniej¹cej. Do klasy istniaj¹cej dodajemy nowy kod, bez modyfikacji istniej¹cego,
+a ca³¹ resztê robi kompilator. Takie coœ nazywamy dziedziczeniem. Sk³adnia i zachowanie w obi tych rozwi¹zaniach s¹ podobne.
+
+1. Sk³adnia kompozycji
+Widaæ tutaj metodê toString(). 
+Tak jak ju¿ wiadomo, bo mówi³em o tm wczeœniej, typy podstawowe s¹ automatycznie inicjalizowane zerem, a referencje do obiektów ustawiane s¹ na null, co
+przy próbie wywo³ania metody na recz któregoœ z takich obiektów spowoduje zg³oszenie wyj¹tku (b³êdu czasu wykonania). Puste referencje natomiast mo¿na
+wypisaæ nie powoduj¹c zg³oszenia wyj¹tku, co jest wygodne ale te¿ dziwne.
+
+To, ¿e kompilator nie tworzy po porstu domyœlnego obiektu dla ka¿dej referencji ma uzsadanienie, poniewa¿ nara¿a³oby to w wielu przypadkach na
+niepotrzebne koszty. Je¿eli chcemy, by odwólania by³y zainicjowane, mo¿na to zrobic:
+- w miejsuc definiowania obiektów, co oznacza, ¿e zawsze bêd¹ inicjowane przed wywo³aniem konstruktora.
+- wewn¹trz konstruktora danej klasy.
+- tu¿ przed zajœciem potrzeby u¿ycia obiektu, co czêsto nazywane jest !inicjalizacj¹ leniw¹!. Mo¿e to zmniejszyæ koszty w przypadkach,
+gdy tworzenie obiektu jest czasoch³onne, a obiekty nie wymagaj¹ tworzenia ka¿dorazowo.
+- za pomoc¹ mechanizmu nicjalizacji egzemplarzy niestatycznych. 
+	Wszystkie te cztery spospby przedstawiono w SkladniKompozycji w klasach Soap i Bath.
+Warto zauwa¿yæ, ¿e instrukcja wypisuj¹ca wewn¹trz konstruktora klasy Bath jest wykonywana jeszcze zanim nast¹pi jakakolwiek inicjalizacja!.
+Jeœli inicjalizacja nie nast¹pi w miejscu definicji, to nadal nie mamy gwarancji, ¿e dokona siê przed przes³aniem komunikatu do referencji 
+reprezentuj¹cej obiekt - nieuchronnie objawi siê to wyj¹tkiem w czasie dzia³ania programu. 
+Metoda toString wype³nia obiekt wskazywany przez s4, wiêc wszystkie pola s¹ prawid³owo zainicjowane przed wykorzystaniem.
+
+2. Sk³adnia dziedziczenia
+
+	Dziedziczenie jest u¿ywane zawsze kiedy tworzymy jak¹œ klasê, gdy¿ je¿eli nawet nie dziedizczymy bezpoœrednio z innej klasy, to automatycznie
+dziediczymy ze standardowej g³ownej klasy bazowej Object.
+	Sk³adnia kompozycji jest oczywista, ale by zastosowaæ dziedziczenie, trzeba u¿yæ ca³kowicie innego zapisu. Dziedzicz¹c, mówimy, ¿e ta nowa klasa
+bêdzie podobna do tamtej klasy. Tutaj w kodzie dodajemy s³owko kluczowe extends. Kiedy to zrobimy automatycznie zyskamy wszystkie zmienne i metody
+sk³adowe klasy bazowej. Przyk³ad w klasach Cleanser i Detergent.
+
+	Przyk³ad pokazuje du¿o ciekawych mo¿liwoœci. +=, co jest przeci¹¿onym operatorem przez Jave do pracê z ³añcuchami tekstowymi. Po drugie Clenanser
+jak i Detergnet zawieraj¹c main(). Mo¿na stworzyæ wiêc main dla ka¿dej z klas, co pozwala na ³atwe testowanie. No i nie ma koniecznoœci usuwania tej metody
+po zakoñczeniu testów, mo¿na j¹ pozostawiæ do pózniejszego sprawdzenia. Bo w przypadku wielu klas w proramie, metoda main zostanie uruchomiona
+tylko z tej klasy która zosta³a wywo³ana w wierszu poleceñ, tzn zosta³a odpalona.
+
+Co istotne - wszystkie metody klasy Cleanser sa publiczne. Pamietajmy, ze jak nie okreslimy zadnego specyfikatora dostêpu dla sk³adowej, to domyœlnie
+bêdzie mia³a ona "przyjazdny", co pozwoli na dostêp jedynie sk³adowym pakietu. KCo zonacza, ze wewnatrz tego pakietu, bez podania specyfikatora
+dostêpu kla¿dy móg³by u¿ywaæ tych metod - klasa Detergent nie mia³aby wiêæ z tym prblemów. Jednak gdyby jakaœ klasa z innego pakietu dziedziczy³a
+po Cleanser, to mog³aby jedynie siêgn¹æ do jej sk³adowych publicznych. Aby jednak umo¿liwiæ dziedziczenie, stosuj zasadê okreœlania wszystkich pól
+jako private, a metod jako public (na dostêp z klas pochodnych zezwaj¹ równie¿ protected). 
+
+Stostuj¹c dziedziczenie nie jesteœmy ograniczeni jedynie do wykorzystywania metod klasy bazowej. Mo¿na równie¿ dodawaæ nowe metody do klasy pochodnej,
+dok³adnie w taki sam sposób, jak dodaje siê dowoln¹ metodê.
+
+
+	

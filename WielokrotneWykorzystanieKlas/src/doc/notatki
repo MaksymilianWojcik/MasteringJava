@@ -72,3 +72,57 @@ s³owo kluczowe SUPER i podaæ odpowiednie argumenty. Przyk³ad w klasach Game, Boa
 wywo³anie konstruktora klasy bazowej musi byæ pierwsz¹ instrukcj¹ w konstruktorze klasy pochodnej (jakby co kompilator o to sie upomni ;) )
 	
 	
+3. DELEGACJE
+
+	Trzeci rodzaj relacji, który nie jest wprost obs³ugiwany przez Jave (C# chyba jest). Jest to relacja poœrednia pomiêdzy dziediczeniem a kompozycj¹,
+bo zak³ada osadzanie w budowanej klasie obiektu innej klasy, ale z równoczesn¹ ekspozycj¹ wszystkich metod tego obiektu w nowej klasie (jak w 
+dziedziczeniu). Przyk³ad w klasach SpaceShipControls i SpaceShip i SpaceShipDelegation.
+	W³aœciwy statek kosmiczny mo¿emy zmontowaæ oczywiœcie za pomoc¹ dziedziczenia (SpaceShip). Ale SpaceShip nie pozostaje w relacji "jest typu" z klas¹ SpaceShipControls,
+mimo, ¿e mo¿na nakazaæ obiektowi SpaceShip wykonanie np. forward(). Mode³ by³by dok³adniejszy, gdybyœmy powiedzieli, ¿e SpaceShip zaweira w sobie
+SpaceShipControls, a wszystkie metody SpaceShipControls s¹ EKSPONOWANE w klasie SpacheSHip. Delegacja s³u¿y w³asnie do tego (klasa SpaceShipDelegation).
+	W przyk³adzie delegacji (SpaceShipDelegation) widaæ, ¿e wywo³ania s¹ przekazywane do zawieranego obiektu controls. Interfejs obiektu zaweiraj¹cego jest 
+identyczny jak w przypadku dziedziczenia, ale delegacja daje wiêksz¹ kontrolê, bo pozwala choæby na wybiórcze udostêpnianie fragmentów interfejsu obiektu
+zawieranego
+
+4. £¹czenie kompozycji i dziediczenia
+
+Stosowanie ich razem jest normalne. Przyk³¹d str 220
+
+5. Zapewnienie poprawnego sprz¹tania
+
+W javie nie mamy destruktorów - nie musimy pamiêtaæ o niszczeniu obiektu i je zostawiamy, pozwalaj¹c w zamian odœmiecaczowi pamiêci na odzyskanie
+pamiêc iw razie potrzeby. Zazwyczaj jest to dorbe rozwi¹zanie, ale zdarzyæ siê mo¿e, ¿e klasawykonujepewne dzia³ania podczas swojego zycia, tkore 
+na koniec wymagaj¹ wykonania porz¹dków. Jak ju¿ omawia³em podczas Inicjalizacji i sprz¹tania", nie wiadomo kiedy zostanie uruchomiony odœmiecacz,
+a nawet czy w ogóle zosatnie uruchomiony. Dlatego te¿ je¿eli musimy po czymœ sprz¹tn¹c, trzeba dopisaæ specjaln¹ metodê, która to zrobic i ipewniæ siê,
+¿e u¿ywaj¹cy klasy wiedz¹, ¿e musz¹ j¹ wywo³aæ. Trzeba te¿, o czym bêdzie mowa w obs³udze wyj¹tków, chroniæ siê przed wyj¹tkami poprzez zamieszczanie
+takiego sprz¹tania w klazuli finally.
+
+	Na przykladzie klas Shaoe, Circle, Traiangle, Line i CadSystem. Wszystko w przykladzie jest figura (obiekt rodzaju Shape(), który z kolei jest typu
+Object). Ka¿da z klas przedefiniowuje metodê dispose() klasy Shape wywo³uj¹c te¿ wersjê tej metody z klasy bazowej. Wszystkie wyspecjalizowane klasy
+typu Shape posiadaj¹ konstruktor, choæ dowolna metoda wywo³ana w czasie ¿ycia obiektu mo¿e wykonywaæ coœ, co wymaga sprz¹tniêcia. Ka¿da z klas
+posiada w³asn¹ metodê dispose() pozwalaj¹c¹ przywróciæ rzeczy nie zwi¹zane z pamiêci¹ dostanu przed powstaniem obiektu.
+	W metodzie main() pojawi³y siê nam dwa nowe s³owa kluczowe: TRY I FINALLY, z obs³ugi blêdów za pomoc¹ wyj¹tków. Try sugnalizuje, ¿e rozpoczynaj¹ct
+siê blok jest obszarem chronionym, czli jest specjalnei traktowany. Jednym z takihc elementów specjalnego traktowania jest to, ¿e kod zamieszczony w 
+klauzuli finally bêdzie wykonywany zawsze, bez wzdlêdu na to, jak zakoñczy siê sam blok try. W przyk³¹dzie finally zawsze wywo³a metodê dispose.
+	W metodzie sprz¹taj¹cej (dispose) trzeba te¿ zwróciæ uwagê na kolejnoœæ wywo³ywania metod sprz¹taj¹cych dla klasy bazowej i obiektów sk³adowych
+na wypadek, gdyby jeden podobkiet zale¿a³ od innego!! Powinno siê generalnei stosowaæ tak¹ sam¹ regu³e, jaka jest narzucona dla destruktórw z C++:
+najpierw wykonaæ sprz¹tanie specyficzne dla danej klasy, w kolejnoœci odwrotnej od tworzenia, a nastepnie, jak to zosta³o tutaj zaprezentowane,
+wywo³aæ metodê sprz¹taj¹c¹ klasy bazowej.
+	Istnieje du¿o systuacji, w których kwestia odzyskania pamiêci nie bêdzie ¿adnym problemem, p prostu pozwalamy odœmiecaczowi pamiêci pracowaæ. 
+Jednak gdy trzeba zrobiæ to bezpoœrednio, konieczne jest zachowanie szczególnej ostro¿noœci! Bo niewielu rzeczy mo¿na byæ pewnym je¿eli chodzi
+o odœmiecacz pamiêcu. Odsmiecanie mo¿e w ogole nie zostaæ wywo³ane. Mo¿e te¿ odzyskiwaæ obiektu w takim porz¹dku, jaki sobie wybierze.
+Najlepiej polegaæ na odsmiecaczu tylko w przypadku zwrotu pamiêci. Je¿eli chcemy, by mia³o miejsce jakieœ sprz¹tanie, najlepiej wypisaæ w³asne metdody
+i nie polegaæ na metodzie finalize().
+
+
+6. Ukrywanie nazw
+	Jeœli klasa bazowa zaweira metodê, której nazwa jest przeci¹¿ona kilka razy, to definicja metody o takiej samej nazwie w klasie pochodnej nie
+spowoduje zakrycia ¿adnej z wersji zamieszczonych w klasie bazowej (nie tak jak w c++). Tym sposobem przeci¹¿anie dzia³¹ niezale¿nie od tego, czy
+dana metoda zdefiniowana by³a na tym poziomie czy te¿ w klasie bazowej. Widaæ to na przyk³adzie klas Homer i Bart i Milhouse i Hide.
+	Przyk³ad ten pokazuje, ¿e wszystkie przeci¹¿one metody klasy Homer dostêpne s¹ w klasie Bart pomimo tego, ¿e w klasie tej zosta³a zdefiniowana
+nowa metoda przeci¹¿ona. Jednak znacznie czêœciej stosowane jest przes³anianie metod o tej samej nazwie z tak¹ sam¹ sygnatur¹ i typem
+zwracanym jak w klasie bazowej. W innym przypadku definicja metody o tej samej nazwie w klasie pochodnej mo¿e byæ mul¹ca. W zwi¹zku z tym w Javie SE5
+dodano adnotacje @Override, która jest wykorzystywana jak s³owa kluczowe ale nie jest s³owiem kluczowym. Kiedy chcemy wiêc przes³oniæ metodê, mo¿emy
+zastosowaæ tak¹ adnotacjê. Kompilatot wtedy wykryje ¿e zamiast przes³aniania mamy przeci¹¿anie i wystosuje komunikat o b³êdzie (bo mieliœmy char doch()
+a zmieniliœmy na void doh i dodaliœmy override). Pojawi siê {CompileTimeError} który wy³¹cza powy¿szy kod z automatycznej, zbiorowej kompilacji przyk³adów/
+Zapis override chorni wiêc przed przypadkowym przeci¹¿eniem tam, gdzie chodzi nam o przes³oniêcie.

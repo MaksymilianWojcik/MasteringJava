@@ -49,5 +49,26 @@ jako private, a metod jako public (na dostêp z klas pochodnych zezwaj¹ równie¿ p
 Stostuj¹c dziedziczenie nie jesteœmy ograniczeni jedynie do wykorzystywania metod klasy bazowej. Mo¿na równie¿ dodawaæ nowe metody do klasy pochodnej,
 dok³adnie w taki sam sposób, jak dodaje siê dowoln¹ metodê.
 
+	a. Inicjalizacja klasy bazowej
+	
+	Mamy wiêc teraz dwie klasy powi¹zanme ze sob¹ - bazow¹ i jej pochjodn¹, wiêc ciê¿kie mo¿e byæ wyobra¿enie sobie obiektu wynikowego z klasy pochodnej.
+Na zwewn¹trz wygl¹da to tak, jakby nowa klasa posiada³a ten sam interfejs co klasa bazowa i kilka dodatkowych pól/metod. Lecz dziedziczenie to nie tylko
+skopiowanie klasy bazowej. Kiedy tworzymy obiekt klasy pochodnej to zawiera on w sobie klasê bazow¹ jako PODOBIEKT, czyli taki jakby osobno utworzony
+obiekt klasy bazowej. Jest on opakowany przez obiekt klasy pochodnej.
+	Wa¿ne, by podobiekt klasy bazowej zosta³ zainicjowany poprawnie i oczywiœcie jest tylko jeden sposób, ¿eby to zapewniæ: wykonaæ inicjalizacjê w
+konstrzuktorze poprzez wywo³anie konstruktora klasy bazowej, który dysponuje ca³¹ wiedz¹ i uprawnieniami by dokonaæ takiej inicjalizacji. Wywo³ania
+konstruktora klasy bazowej w Javie do³¹czane s¹ AUTOMATYCZNIE w konstruktorach klasy pochodnej. Widaæ to w dzia³aniu na przyk³adzie dziedziczenia
+trójpoziomego w klasach Art, Drawing i Cartoon.
+	Widaæ tam, ¿e konstruowanie przebiega od góry, wiêc klasa bazowa jest inicjowana, zanim konstruktor klasy pochodnej mo¿e uzyskaæ do niej dostêp.
+Nawet gdy nienapisalibyœmy  konstruktora dla klasy Cartoon, to kompilator jak ju¿ wiemy do³¹czy za nas i tak konstruktor domyœlny, który wywo³ywa³
+bêdzie konstruktor klasy bazowej.
 
+	b. Konstruktory z argumentami
+	
+	W przyk³adzie wy¿ej mamy konstruktory domyœlne. Tzn niepobieraj¹ce ¿adnych parametrów. Ich wywo³ywanie jest wiêc proste, nie powstaje pytanie jakie
+parametry przekazaæ. Jeœli klasa nie zawiera parametrów domyœlnych lub kiedy chemy wyo³aæ sparametryzowany konstruktor klasy bazowej, trzeba zastosowaæ
+s³owo kluczowe SUPER i podaæ odpowiednie argumenty. Przyk³ad w klasach Game, BoardGame i Chess
+	Je¿eli nie wywo³amy konstruktora klasy bazowej w BoardGame, to kompilator bêdzie informowa³, ¿e nie mo¿e odnalezæ konstruktora Game(). Na dodatek
+wywo³anie konstruktora klasy bazowej musi byæ pierwsz¹ instrukcj¹ w konstruktorze klasy pochodnej (jakby co kompilator o to sie upomni ;) )
+	
 	

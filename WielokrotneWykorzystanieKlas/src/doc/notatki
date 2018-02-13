@@ -126,3 +126,109 @@ dodano adnotacje @Override, która jest wykorzystywana jak s³owa kluczowe ale nie
 zastosowaæ tak¹ adnotacjê. Kompilatot wtedy wykryje ¿e zamiast przes³aniania mamy przeci¹¿anie i wystosuje komunikat o b³êdzie (bo mieliœmy char doch()
 a zmieniliœmy na void doh i dodaliœmy override). Pojawi siê {CompileTimeError} który wy³¹cza powy¿szy kod z automatycznej, zbiorowej kompilacji przyk³adów/
 Zapis override chorni wiêc przed przypadkowym przeci¹¿eniem tam, gdzie chodzi nam o przes³oniêcie.
+
+
+7. SLOWA KLUCZOWE FINAL
+
+	W zale¿noœci od kontekstu mo¿e mieæ ró¿ne znaczenie, ale generalnie oznacza, ¿e zmienna nie mo¿e byæ zmieniona. S¹ trzy sytuacje, wk tórych mo¿emy stosowaæ
+final: dla klas, metod i zmiennych.
+
+	A. ZMIENNE FINALNE
+	Praktycznie w wiêkszoœci jêzyków istnieje mo¿liwoœæ zdefiniowania zmiennej jako STA£EJ (CONST). Dlaczego s¹ one przydatne? No bo mog¹ istnieæ sta³e czasu
+kompilacji, które nigdy nie bêd¹ zmieniane oraz te¿ mog¹ to byæ wartoœci inicjowane w czasie dzia³ania, których nie chcemy modyfikowaæ.
+	W przypadku sta³yuch czasu kompilacji kompilator ma mo¿liwoœæ umieszczenia wartoœci sta³ej wewn¹trz obliczeñ, w których jest ona u¿yta, co oznacza, ¿e obliczcenia
+mog¹ siê wykonaæ w czasie kompilacji, co eliminuje koszty podczas wykonania. W Javie sta³e tego typy musz¹ byæ reprezentowane przez zmienne typu podstawowego no i za
+pomoc¹ s³ówka kluczowego final. Wartoœc musi zostaæ przypisana W MIEJSCU DEFINICJI STA£EJ.
+
+	Pole, które jest i statyczne i finalne jednoczeœnie, zajmuje tylko jeden okreœlony fragment pamiêci i do tego jeszcze nie mo¿e ulec zmianie.
+
+	Gdy stosujemy final dla referencji do obiektów, znaczenie mo¿e byæ troszkê myl¹ce, bo dla typu elementarnego to wartoœæ staje siê sta³¹, a dla referencji do obiektu to
+referencja staje siê sta³¹. Gdy zainicjujemy j¹ jako odwo³anie do konkretnego obiektu, to nigdy nie bêdzie mo¿na jej zmieniæ tak, by wskazywa³a na inny obiekt. ALE!
+SAM obiekt mo¿e byæ modyfikowany (w Javie nie ma sposobu, by uczyæ jakiœ obiekt niezmiennym, no chyba ¿e napiszemy jak¹œ klasê z samymi pirvateami). Co wiêcej, takie
+same ograniczenie dotyczy tak¿e tablic (które te¿ s¹ OBIEKTAMI!).
+
+	W klasie FinalData i Value zaprezentowany przyk³ad z polami finalnymi. Zwróciæ uwagê na nazy pól.
+	Poniewa¿ valueOne i VALUE_TWO, które s¹ typu podstawowego, s¹ zadeklarowane jako finalne, to mog¹ byæ u¿yte jako sta³e ju¿ podczas kompilacji i tak w³aœnie jest.
+VALUE_THREE jest bardziej typowym sposobem definiowania takich sta³ych, tzn jest publiczna, statyczna (by zaznaczyc ze jest tylko jedna) no i finalna. Zmienne z modyfikatorami
+final static zainicjowane jako wartoœci sta³e (oznacza to, ¿e s¹ sta³ymi czasu kompilacji) s¹ z zasady nazywane du¿ymi literami.
+	Z faktu, ¿e coœ jest finalne, nie wynika, ¿e jego wartoœæ jest znana podczas kompilacji. Widaæ to na przyk³adzie inicjalizacji zmiennych i4 i INT_5, które inicjowane s¹ w
+czasie wykonania z zastosowanie liczb losowych. Ten fragment kodu pokazuje te¿ ró¿nice miêdzy uczynieniem finaln¹ zmiennej statycznej a egzemplarzowej. Ró¿nica ujawnia siê wtedy jedynie,
+gdy wartoœci s¹ inicjowane w czasei dzia³ania, bo wartoœci czasu kompilacji s¹ traktowane przez kompilator tak samo. Wartoœæ zmiennej i4 jest unikatowa dla obiektów fd1 i fd2,
+natomiast wartoœæ INT_5 nie ulega zmianie po utworzeniu drugiego obiektu klasy FinalData!!!!! Dlatego, ¿e jest to zmienna statyczna i jest inicjowana wy³¹cznie RAZ PODCZAS £ADOWANIA, a nie
+za ka¿dym razem, kiedy tworzony jest obiekt.
+	Zmienne v1 do VAL_3 s¹ przyk³¹dem znaczenia referencji z modyfikatorem final. Jak zauwa¿amy w metodzie main(), z tego, ¿e v2 jest finalna, wcale nie wynika ¿e nie mo¿na zmieniæ wartoœci
+tego obiektu. Nie mo¿na tylko przepi¹æ v2 do nowego obiektu, bo jest finalna. v2 zawiera referencje, a wiêc final oznacza, ¿e nie mo¿na jej przestawiæ. Takie samo dzia³anie jest w przypadku
+tablic, które s¹ trochê innym rodzajem referencji (nie ma sposobu na uczynienie referencji w tablicach same w sobie finalnymi). Stworzenie wiêc referencji finalnej jest trochê
+mniej przydatne ni¿ stworzenie finalnych zmiennych podstawowych.
+
+	A1. PUSTE ZMIENNE FINALNE
+	Mo¿emy te¿ tworzyæ puste zmienne finalne bêd¹ce polami zadeklarowanymi z modyfikatorem final, ale jeszcze nie zainicjalizowanymi. Zmienne takie jednak musz¹ zostaæ zainicjowane przed u¿yciem, 
+o co zreszt¹ te¿ zadba i dopilnuje kompilator. Puste zmienne finalne zapewniaj¹ wiêc wiêksz¹ elastcznoœæ - np finalne pola sk³adowe mog¹ teraz byæ ró¿ne dla ka¿dego z obiektów i w dodatku
+zachowuj¹ w³aœciwoœæ niezmiennoœci. Przyklad w klasie Poppet i BlankFinal. Kompilator wymusza przypisanie wartoœci zmiennym finalnym klasy albo w miejscu definicji, albo w ka¿dym z konstruktorów.
+Dziêki temu mamy pewnoœc, ¿e pola final zawsze s¹ zainicjalizowane.
+
+	A2. FINALNE ARGUMENTY
+	Mo¿emy te¿ uczyniæ finalnymi argumenty metody. To oznacza, ¿e wewn¹trz metody nie mo¿na zmieniæ ich wartoœci. Np nie mozna w void f(final int i) zinkrementowac i: {i++ }. Z referencjami
+wiadomo, nie mo¿na przepi¹c referencji. Tutaj chyba niepotrzebny przyk³ad, a jak coœ to zó³æ. W przypadku metod ze zmiennymi finalymi mo¿na jedynie odczytaæ wartoœæ, lecz nie mo¿na jej zmieniæ.
+Takie coœ wykorzystuje siê przede wsyzstkim do przekazywania danych do nienazwanych klas wewnêtrznych, o którym se powiemy kiedyœ.
+
+	B. METODY FINALNE
+	S¹ 2 powody by metody zaznaczaæ jako finalne: jest to jakby za³o¿enie blkady na metodê, ¿eby klasy pochodne nie mog³y dokonywaæ ¿adnych zmian. Drugi powód zwi¹zany jest z kwesti¹ wydajnoœci. Jeœli
+metoda zostanie finalna, pozwoli to kompilatorowi zamieniæ wywo³ania metody na wywo³ania w miejscu (tzw. inline). Kiedy kompilator napotka wywo³anie metody finalnej, mo¿e dyskretnie omin¹æ normaln¹
+procedurê w³¹czenia kodu s³u¿¹cego do wywo³ania metody (po³o¿enie argumentów na stosie, skok do kodu metody i jego wykonanie, powrót, wyczyszczenie stosu z do³o¿onych argumentów i przekazanie
+wartoœci zwracanej), zastêpuj¹c takie wywo³anie metody skopiowaniem jej rzeczywistego kodu. Dziêki temu narzut kosztów wywo³ania metody zostaje wyeleminiwany. Oczywiœcie jeœli metoda jest du¿a, kod staje
+siê rozbudowany i raczej nie ma to ¿adnych korzyœci, bo jakakolwek poprawa bêdize bardoz ma³a w stosunku do czasu spêdzonego w metodzie. Obecnie w javie od chyba 5+ okreœlanie metod finalnymi jest zbêdne,
+bo maszyna  wirtualna potrafi sama wykryœ takie sytuacje i w toku optymalizacji pozbyæ siê poœrednioœci. Tak wiêc w javie 5+ kwestie wydajnoœci nale¿y zostawiaæ kompilatorowi i maszynie wirtualnej,
+a metody oznaczaæ final tylko wtedy, kiedy chcemy zapobiec ich przes³oniêciu.
+
+	B1. final i private
+	Ka¿da metoda prywatna klasy w pewien sposób staje siê te¿ finalna, bo nie ma do niej dostêpu z zewn¹trz, wiêc te¿ nie mo¿na ich przes³oniæ. final w takim przypadku obok private niczego nie daje.
+Kwestia ta mo¿e wprwoadzaæ w b³¹d, bo jak chcemy przes³oniæ metodê prywatn¹, wydaje siê ¿e to dzia³a (bo kompilator nie zg³osi ¿adnych b³êdów), ale tak naprawdê my nie przes³aniamy, tylko tworzymy wtedy
+now¹ metodê. Bo przes³oniêcie mo¿e mieæ miejsce tylko wtedy, gdy coœ jest czêœcia interfejsu klasy bazowej. Czyli musimy mieæ mo¿liwoœæ rzutowania obiektu na klasê bazow¹ i wywo³ania tej samej metody
+(wyjaœnie to bardizej póniej). Je¿eli metoda jest prywatna, to nie zalicza siê jej do interfejsu klasy bazowej. Jest to po prostu jakiœ ukryty kod wewn¹trz klasy.
+
+
+	C. KLASY FINALNE
+	Kiedy okreœlimy jak¹s ca³¹ klasê jako finaln¹, to dajemy znaæ, ¿e nie pozwalamy z niej dziedziczyæ. Czyli jest to za³o¿enie, ¿e nigdy nie bêdzie potrzeby dokonywania ¿adnych zmian lub te¿ ze wzglêdów
+bezpieczeñstwa nie chcemy dalej dziedziczyæ. 
+	Pola klasy mog¹ byæ finalne niezale¿nie od naszego wyboru. Ta sama zasada dotyczy stosowania final wobec sk³adowych klasy, bez wzglêu na to czy klasa jest finalna. Final przed klas¹ jedyne co robi to
+zabrania z niej dziedziczenia. NO I! Z uwagi na to, ¿e nie mo¿na dziedziczyæ to wszystkie metody klasy finalnej staj¹ siê równie¿ finalne, no bo przecie¿ nie ma mo¿liwoœci ich przes³oniêcia. Mo¿emy dopisaæ
+te modyfikatory, ale to nieczego nie zmienia.
+
+	TAK NA MARGINESIE - OSTROZNIE Z DEKLARACJA FINAL
+	Stosowanie metod finalnych wydaje sie praktyczne. Mozemy myslec, ¿e wydajoœæ jest bardzo istotna podczas u¿ywania klasy i prawdopodobnie nikt nie bêdzie przes³ania³ naszych metod. Czasami jest to prawd¹.
+Przy takich za³o¿enia trzeba byæ ostro¿nym, bo trudno jest przewidzieæ, jak klasa mo¿e byæ wykorzystywana, szczególnie taka ogólnego przeznaczenia. Jeœli okreœlimy metode finaln¹, to zablokujemy mo¿liwoœæ
+powtórnego wykorzystania klasy przez dziedziczenie w kilku innych projektach z powodu braku wyobrani, ¿e mo¿e byæ tak wykorzystana.
+
+
+	D. INICJALIZACJA I LADOWANIE KLAS
+	W wiêkszoœci jêzyków programy ³adowane s¹ w ca³oœci podczas startu, pózniej nastêpuje inicjalizacja i wtedy program rozpoczyna dzia³anie. Prces inicjalizacji musi wtdy byæ starannie kontrolowany, by
+przypadkiem kolejnoœæ inicjalizacji zmiennych statycznych nie sprawia³a k³opotów. Np C++ ma problemy, jesli jedna mzienna statyczna dla swojjej porapwanej konstrukcji wymaga pobrania wartoœc iinnej, zanim
+ona zostanie zainicjalizowana.
+	W Javie na szczêœci nie ma takiego problemu, bo mechanizm ³adowania klas jest tu trochê inny. To jedna z czynnoœci upraszczanych podejœciem polegaj¹cym na reprezentowaniu wszystkiego obiektami.
+Skompilowany kod ka¿dej klasy jest przechowywany w oddzielnym pliku. Plik taki nie jest wczytywany, dopóki kod nie jest potrzebny. Mo¿na powiedzieæ, ¿e kod klasy jest ³adowany podczas pierwszego u¿ycia.
+Jest to zwykle moent utworzenia pierwszego obiektu danej klasy, ale tak naprawdê wczytanie klasy mo¿e nast¹piæ wczeœniej, np w wyniku wywo³ania statycznej metody albo odwo³ania do statycznego pola tej klasy.
+(Co warto zauwazycm konstruktor klasy rowniez jest metoda statyczna! Mimo braku slowa static. Ladowanie klasy nastêpuje wiêc w momencie pierwszego odwo³ania do jakiejkolwiek statyucznej sk³adowej klasy).
+	Czas pierwszego wykorzystania to te¿ miejsce inicjalizacji zmiennych statycznych. Wszystkie obiekty statyczne i bloki statyczne s¹ podczas ³adowania inicjalizowane w porz¹dku tekstowym (czyli w kolejnoœci,
+w jakiej zosta³y wpisane w definicji klasy). No i jak wiadomo, to co statyczne inicjalizowane jest tylko raz.
+
+	D1. INICJALIZACJA W PRZYPADKU DZIEDZICZENIA
+	Zobaczmy przyklad procesu inicjalizacji z w³¹czeniem mechanizmu dziedziczenia. Na przykladzie klas Insect i Beetle. Najpierw interpreter Javy odnajdzie metodê Beetle.main() (jest statyczna), dalej modu³
+³aduj¹cy bêdzie szuka³ skompilowanego kodu klasy Beetle (w pliku Beetle.class). Podczas ³adowania kodu klasy modu³ ³aduj¹cy ddostrzeze, ¿e ma ona klasê bazow¹ (extends), która nastêpnie wczytuje, niezale¿nie
+od tego, czy tworzymy obiekt klasy bazowej czy nie.
+	Je¿eli klasa bazowa ma z kolei swoj¹ klasê bazow¹, to wtedy ta druga bêdzie te¿ ³adowana itp. Nastêpnie wykonywana jest inicjalizacja zmiennych statycznych g³ównej klasy bazowej i dalej to samo w klasie
+pochodnej itp. Jest to wa¿ne, bo inicjalizacja statyczna w klasach pochodnych mo¿e zale¿eæ do w³aœciwej inicjalizacji sk³adowych klasy bazowej.
+	Teraz, gdy wszystkie wymagane klasy s¹ ju¿ za³adowane, mo¿e nast¹piæ tworzenie obiektu. Najpeirw wszystkei typy podstawowe w obiekcie ustawiane s¹ na odpowiednie wartoœci domyœlne, a referencje obiektów
+na null (wszystko jednym, p³ynnym ruchem, przez binarne wyzerowanie pamiêci obiektu). Wtedy wywo³ywane jest konstruktor klasy bazowej. W przyk³¹dzie wywo³ane jest automatyczne, ale mo¿na równie¿ okreœliæ
+takie wywo³anie konstruktora klasy bazowej (jako pierwsz¹ operacjê w konstruktorze klasy Beetle(), stosuj¹c s³ówka SUPER. Konstruktor klasty bazowej podlega temu samemu procesowi w tym samym porz¹dku, co 
+konstruktor klasy pochodnej. Po zakoñczeniu dzia³ania konstruktora klasy bazowej inicjalizwane s¹ zmienne egzemplarza, w kolejnoœci wyst¹pienia. Na koniec dopiero wykonywana jest reszta kodu konstruktora.
+
+	PODSUMOWANIE
+	Kompozycja i dziedziczenia pozwalaj¹ na stworzenie nowych typoów danych z typów ju¿ istniej¹cych. Kompozycjê stosuje siê w celu ponowengo wykorzystania istniej¹cych typów jako czêœci wewnetrznej implemetacji,
+a dziedziczenie, kiedy chcemy ponownie wykorzystaæ interfejs.
+	Przy dziedziczeniu klasa pochodna ma te¿ interfejs swojego przodka, mo¿e byæ wiêæ rzutowana w górê do klasy bazowej (ma to znaczenie dla polimorfizmu).
+	Mimo nacisku na nauke dziediczenia, w programowaniu obiektowym na pocz¹tku powinno preferowaæ siê kompozycjê, a dziedziczenie stosowac tylkowtedy, gdy naprawde jest konieczne. Kompozycja bywabardziej
+elastyczna. Dodatkowo stosujac w³aœciwoœc idziedziczenia, mo¿na zmienic w³aœciwy typ obiektów sk³adowych i tym sposobem zachowanie tych obiektów podczas pracy programu. Mo¿na wiêc zmieniæ w trakcie dzia³ania programu
+zachowanie obiektu bêd¹cego kompozycj¹ innych obiektów.
+
+	

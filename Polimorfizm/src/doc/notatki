@@ -1,2 +1,59 @@
 Polimorfizm
 
+Dostarcza metode separacji interfejsu od implementacji, oddziela co od jak. Polepsza organizacje iczytelnosc kodu i pozwala na tworzenie rozszerzalnych programow, 
+ktore moga byc roziwjane gdy potrzebne s¹ nwoe mo¿liwoœci.
+
+Hermetyzacja umo¿liwa tworzenie nowch typow danych poprzez po³¹czenie charakterystki z okreslonym zestawem zachowan. Ukrywanie implementacji pozwala na oddzielenie
+interfejsu zachowañ od interfejsu poprzez iuczynbienie szczegó³ów prywatnymi. W poprzednim temacie o dziedziczeniu dowiedzielismy siê, w jaki sposób dziedziczenie pozwala
+traktowaæ obi9ekt jako reprezentanta swego typu lub te¿ typu bazowego. Pozwala to na traktowanie wielu typów jak jednego, dziêki czemu pojedynczy fragment kodu bêdzie dzia³aæ
+tak samo na ka¿dym z nich. 
+Polimorficzne wywo³anie metod umo¿liwa natomiast danemu typowi odró¿nienie siebie od innych, podobnych, tak d³ugo, jak d³ugo s¹ one wywiedzione ze wspólnego typu bazowego. 
+Odró¿nienie to polega na odmiennym dzia³aniu metod, które mog¹ byæ wywo³ywane poprzez interfejs wspólnej klasyu bazowej.
+
+Polimorfizm - zwany rowniez wiazaniem dynamicznym, poznym wizaaniem lub wi¹zaniem czasu wykonania. O co chodzi z wi¹zaniem, zaraz wyjaœniê.
+
+
+--> RZUTOPWANIE W GÓRÊ RAZ JESZCZE
+
+W dziedziczeniu obserwowaliœmy u¿ycie obiektu jako reprezentanta swego typu luyb jako obiektu bazowego. Traktowanie referencji do obiektu jako referencji do typu bazowego
+nazywane jest RZUTOWANIEM W GÓRÊ.
+
+Istnieje tu jednak jeden problem pokjazany na przyk³¹dzie Instruments. 
+Metoda Music.tune() akceptuje referencje typu Instrument, ale równie¿ wszystkich innych typów dziedzicz¹cych po Instrument. Rzutowanie tutaj nie jest konieczne. Jest to dopuszczalne,
+bo klasa Wind musi zawieraæ interfejs Instrument, gdy¿ z niego dziedziczy. Rzutopwanie w górê mo¿e zawêziæ interfejs klasy, nie mo¿e go jednak uczyniæ mniejszym od pe³nego interfejsu!!!
+
+--> Zapominanie o typie obiektu
+
+Program Music mo¿e siê wydawaæ dziwny, bo czemu mielibyœmy celowo zapominaæ, jaki jest w³aœciwy typ obiektu? To w³aœnie DZIEJE siê przy rzutowaniu w górê, a wydaje siê, ¿e znacznie
+bardziej naturalne by³oby, gdyby tune() pobiera³o po prostu jako swój argument referencje typu Wind. To jednak prowadzi do kluczowego sposrze¿enia:
+JEŒ£I TAK BYŒMY ZROBILI, potrzebowalibyœmy oddzielnej metody tune() dla ka¿dego typu Instrument. Jest to mo¿liwe, jednak ile duplikatów kodu
+byœmy robili. Oznacza to równie¿ du¿o pracy, w przypadku, gdy byœmy chcieli dodaæ now¹ metodê w rodzaju tune lub nowy Instrument.
+
+Czy nie prostsze jest w³aœnie napisanie jednej metodyu pobieraj¹cej jako argument obiekt klasy bazowej zamiast którejœ z wyspecjalizowanyuch klas pochodnych? Czyli:
+CZY NIE BY£OBY MI£O zapomnieæ o istnieniu klas pochodnych i pisaæ kod komunikuj¹cy siê jedynie z klas¹ bazow¹?
+
+I W£AŒNIE TO UMO¯LIWIA POLIMORFIZM.
+
+
+--> ZROZUMIENIE
+
+Trudnoœæ w zrozumieniu polimorfizmu i zwi¹zan¹ z programem Music mo¿emy zobaczyæ juz w czasie jego uruchomieniu. Na wyjœciu pojawia siê Win.play(), co jest oczywiœcie po¿¹dane. Ale DLACZEGO trak siê dzieje?
+Metoda tune otrzymuje referencje typu Instrument. Sk¹d zatem kompilator wie, ¿e wskazuje ona na obiekt typu Wind, a nie np. jakiegoœ innego rozszerzaj¹cego Instrument? Kompilator przecie¿ nie mo¿e tego
+wiedzieæ. ¯eby to zrozumieæ dok³adnie, trzeba poznaæ zagadnienie WI¥ZANIA
+
+--> WI¥ZANIE WYWO£ANIA METODY
+
+Po³¹czenie wywo³ania metody z jej cia³em nazywamy WI¥ZANIEM. Gdy wi¹zanie dokonuje siê PRZED wykonaniem pgoramu (czyli jest wykonywane prezz kompilator i linker, jeœli taki wystêpuje), to mówimy o WCZESNYM WI¥ZANIU.
+
+Sprawi¹j¹ca k³opoty czêœæ programu Music wymyka siê wczesnemu wi¹zaniu, poniewa¿ kompiulator przecie¿ nie mo¿e wiedzieæ, jak¹ w³aœciwie metodê powinien wywo³aæ, maj¹c jedynie referencjê typu Instrument.
+
+Rozwi¹zaniem jest w³aœnie tzw. PÓNE WI¥ZANIE. Oznacza to, ¿e wi¹zanie odbywa siê w czasie wykonania programu i opiera siê na w³aœciwym typie obiektu. Proces ten zwanty jest czasem wi¹zaniem dynaicznym lub
+wi¹zaniem czasu wykonania. W jêzyku, który implementuje pózne wi¹zanie musi istnieæ mechanizm okreœlania typu obiektu w czasie wykonania programu w celu wywo³ania odpowiedniej metody. 
+A zatem kompilator wci¹¿ nie zna tpyu obiektu, jednak mechanizm wywo³ania metody srpawdza to i odwo³uje siê do w³aœciwego jej cia³a. Czyli mo¿na sobie wyobraziæ, ¿e pewna informacja o typue musi byæ wbudowana w obiekty.
+
+Wszystkie wi¹zania w Javie s¹ wi¹zaniami póznymi, chyba ¿e metoda zosta³a zadeklarowana jako final lub jest prywatna. Znaczy to, ¿e normalnie nie musimy podejmowaæ ¿adnych decyzji dot. u¿ywania póznego wi¹zania - wystêpuje 
+ono automatycznie.
+
+Dlaczego mielibyœmy deklarowaæ metodê z u¿yciem final w takim razie? No jak ju¿ mówiliœmy o final, pozwala i zapobiega przes³oniêciu metody przez kogoœ innego. Wa¿niejsze mo¿e nawet jest to, ¿e zapobiega, a w³aœciwie wy³¹cza
+pózne wi¹zanie, czyli mówi kompilatorowi, ¿e pózne wi¹zanie nie jest konieczne, co pozwala kompilatorowi na wygenerowanie efektywniejszego kodu dla metod tak zadeklarowanych.
+
